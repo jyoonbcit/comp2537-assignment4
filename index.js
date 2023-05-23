@@ -16,6 +16,12 @@ const setup = () => {
                 console.log("match")
                 $(`#${firstCard.id}`).parent().off("click")
                 $(`#${secondCard.id}`).parent().off("click")
+                // If player has won
+                if ($("#img1").parent().hasClass("flip") && $("#img2").parent().hasClass("flip") && $("#img3").parent().hasClass("flip")
+                    && $("#img4").parent().hasClass("flip") && $("#img5").parent().hasClass("flip") && $("#img6").parent().hasClass("flip")) {
+                    console.log("Win")
+                    alert("You win!")
+                }
             } else if (firstCard.src != secondCard.src) {
                 // Different card selected
                 console.log("no match")
