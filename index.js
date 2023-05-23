@@ -1,8 +1,24 @@
-const setup = () => {
+function countdown() {
+    let time = 100;
+    let timer = setInterval(() => {
+        time--;
+        $("#timer").html(time);
+        if (time == 0) {
+            clearInterval(timer);
+            alert("You lose!");
+        }
+    }, 1000);
+}
+
+function gameStart(){
+    countdown();
+    let clickCount = 0;
     let firstCard = undefined
     let secondCard = undefined
+
     $(".card").on(("click"), function () {
         $(this).toggleClass("flip");
+        clickCount++;
 
         if (!firstCard) {
             // Select and set first card
@@ -41,7 +57,16 @@ const setup = () => {
             secondCard = undefined;
             console.log("New first card:", firstCard);
         }
+
+        let pairsLeft = Math.ceil(3 - $(".flip").length / 2)
+        let pairsMatched = Math.floor(3 - pairsLeft)
+        let totalPairs = 3
+        // Update header
+        $("#clickCounter").html(`
+        ${clickCount} clicks <br>
+        ${pairsLeft} pairs left <br>
+        ${pairsMatched} pairs matched <br>
+        ${totalPairs} total pairs <br>
+        `);
     });
 }
-
-$(document).ready(setup)
