@@ -13,6 +13,25 @@
 </head>
 
 <body>
+    <h1 id="clickCounter">
+        Click the button to start! <br>
+    </h1>
+    <h1 id="timerHeader">
+        You've got 100 seconds! Time remaining: <span id="timer">100</span> seconds
+    </h1>
+
+    <div id="difficultyButtons">
+        <button id="easyButton" onclick="easyMode()">Easy</button>
+        <button id="mediumButton" onclick="mediumMode()">Medium</button>
+        <button id="hardButton" onclick="hardMode()">Hard</button>
+    </div>
+
+    <button id="startButton" onclick="gameStart()">Start</button>
+    <br>
+    <button id="resetButton" onclick="window.location.reload()">Reset</button>
+
+    <br>
+
     <div id="game_grid">
         <div class="card">
             <img id="img1" class="front_face" src="001.png" alt="">
