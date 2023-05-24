@@ -3,6 +3,8 @@ let totalCards = 0;
 let numRows = 0;
 let numCols = 0;
 let timer;
+let pokemonList;
+   
 
 function setDifficulty(diff) {
     difficulty = diff;
@@ -21,24 +23,25 @@ function setDifficulty(diff) {
     }
 }
 
-function createGameGrid() {
+function powerup() {
+    
+}
+
+async function createGameGrid() {
     $("#game_grid").empty();
 
     const pairs = totalCards / 2;
-    const images = [];
-
-    for (let i = 1; i <= pairs; i++) {
-        images.push(i);
-    }
 
     let idNumber = 0;
     const cards = [];
 
     for (let i = 0; i <= 1; i++) {
         for (let j = 0; j < pairs; j++) {
+            let spr = await axios.get(pokemonList[j].url);
+            console.log(spr.data.sprites.front_default)
             idNumber++;
             const card = $("<div>").addClass("card");
-            const frontFace = $("<img>").addClass("front_face").attr("id", `img${idNumber}`).attr("src", `00${images[j]}.png`).attr("alt", "");
+            const frontFace = $("<img>").addClass("front_face").attr("id", `img${idNumber}`).attr("src", spr.data.sprites.front_default).attr("alt", "");
             const backFace = $("<img>").addClass("back_face").attr("src", "back.webp").attr("alt", "");
 
             card.append(frontFace, backFace);
@@ -46,7 +49,7 @@ function createGameGrid() {
         }
     }
 
-    shuffleArray(cards);
+    mix(cards);
 
     for (const card of cards) {
         $("#game_grid").append(card);
@@ -60,9 +63,11 @@ function createGameGrid() {
     $(".card").css({
         "width": `${100 / numCols}%`
     });
+
+    console.log("game grid created")
 }
 
-function shuffleArray(array) {
+function mix(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
@@ -81,10 +86,13 @@ function countdown() {
     }, 1000);
 }
 
-function startGame() {
+async function startGame() {
     clearInterval(timer);
     countdown();
-    createGameGrid();
+    await createGameGrid();
+    $("#powerup").append(`
+        <button id="powerup_button" class="btn btn-secondary" onclick="powerup()">Powerup</button>
+    `)
 
     let clickCount = 0;
     let firstCard = undefined;
@@ -92,7 +100,10 @@ function startGame() {
 
     const totalPairs = Math.floor(totalCards / 2); // Define and set the totalPairs variable based on totalCards
 
+    console.log("game start")
+
     $(".card").on(("click"), function () {
+        console.log("click")
         $(this).toggleClass("flip");
         clickCount++;
 
@@ -147,11 +158,20 @@ function startGame() {
     });
 }
 
-function setup() {
-    document.getElementById("darkModeBtn").addEventListener("click", function () {
-        document.body.classList.add("darkMode");
+const setup = async () => {
+    let res = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=151');
+    pokemonList = res.data.results;
+    mix(pokemonList);
+    console.log("axios setup complete")
+
+    $("#darkModeBtn").click(function () {
+        $("body").addClass("darkMode");
     });
-    document.getElementById("lightModeBtn").addEventListener("click", function () {
-        document.body.classList.remove("darkMode");
+
+    // Light mode button click event
+    $("#lightModeBtn").click(function () {
+        $("body").removeClass("darkMode");
     });
-} $(document).ready(setup);
+} 
+
+$(document).ready(setup);
