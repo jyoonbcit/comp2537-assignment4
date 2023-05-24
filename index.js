@@ -146,3 +146,12 @@ function startGame() {
         }
     });
 }
+
+function setup() {
+    document.getElementById("darkModeBtn").addEventListener("click", function () {
+        document.body.classList.add("darkMode");
+    });
+    document.getElementById("lightModeBtn").addEventListener("click", function () {
+        document.body.classList.remove("darkMode");
+    });
+} $(document).ready(setup);

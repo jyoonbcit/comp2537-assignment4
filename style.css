@@ -67,6 +67,15 @@ img {
     margin: auto;
 }
 
+#theme {
+    text-align: center;
+}
+
 p {
     text-align: center;
+}
+
+.darkMode {
+    background-color: #000000;
+    color: #ffffff;
 }
