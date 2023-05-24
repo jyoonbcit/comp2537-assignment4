@@ -4,6 +4,7 @@ let numRows = 0;
 let numCols = 0;
 let timer;
 let pokemonList;
+let cards;
    
 
 function setDifficulty(diff) {
@@ -24,7 +25,17 @@ function setDifficulty(diff) {
 }
 
 function powerup() {
-    
+    let pTime = 2;
+    let unknownCards = $(".card").not(".flip");
+    powerTimer = setInterval(() => {
+        pTime--;
+        unknownCards.toggleClass("flip");
+        if (pTime == 0) {
+            clearInterval(powerTimer)
+            unknownCards.removeClass("flip");
+        }
+    }, 1000);
+    $("#powerup_button").remove();
 }
 
 async function createGameGrid() {
@@ -33,7 +44,7 @@ async function createGameGrid() {
     const pairs = totalCards / 2;
 
     let idNumber = 0;
-    const cards = [];
+    cards = [];
 
     for (let i = 0; i <= 1; i++) {
         for (let j = 0; j < pairs; j++) {
