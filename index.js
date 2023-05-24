@@ -1,3 +1,69 @@
+let difficulty = 'Easy';
+let totalCards = 0;
+let numRows = 0;
+let numCols = 0;
+
+function setDifficulty(diff) {
+    difficulty = diff;
+    if (difficulty === "Easy") {
+        totalCards = 6;
+        numRows = 2;
+        numCols = 3;
+    } else if (difficulty === "Medium") {
+        totalCards = 12;
+        numRows = 3;
+        numCols = 4;
+    } else if (difficulty === "Hard") {
+        totalCards = 20;
+        numRows = 4;
+        numCols = 5;
+    }
+    createGameGrid();
+}
+
+function createGameGrid() {
+    const gameGrid = $("#game_grid");
+    gameGrid.empty();
+
+    const pairs = totalCards / 2;
+    const images = [];
+
+    for (let i = 1; i <= totalCards; i++) {
+        images.push(i);
+    }
+
+    shuffleArray(images);
+    let idNumber = 0;
+
+    for (let i = 0; i <= 1; i++) {
+        for (let j = 0; j < pairs; j++) {
+            idNumber++;
+            const card = $("<div>").addClass("card");
+            const frontFace = $("<img>").addClass("front_face").attr("id", `img${idNumber}`).attr("src", `00${images[j]}.png`).attr("alt", "");
+            const backFace = $("<img>").addClass("back_face").attr("src", "back.webp").attr("alt", "");
+
+            card.append(frontFace, backFace);
+            gameGrid.append(card);
+        }
+    }
+
+    gameGrid.css({
+        "width": `${numCols * 200}px`,
+        "height": `${numRows * 200}px`
+    });
+
+    $(".card").css({
+        "width": `${100 / numCols}%`
+    });
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
 function countdown() {
     let time = 100;
     let timer = setInterval(() => {
@@ -10,11 +76,14 @@ function countdown() {
     }, 1000);
 }
 
-function gameStart(){
+function startGame() {
     countdown();
+
     let clickCount = 0;
-    let firstCard = undefined
-    let secondCard = undefined
+    let firstCard = undefined;
+    let secondCard = undefined;
+
+    const totalPairs = Math.floor(totalCards / 2); // Define and set the totalPairs variable based on totalCards
 
     $(".card").on(("click"), function () {
         $(this).toggleClass("flip");
@@ -23,6 +92,7 @@ function gameStart(){
         if (!firstCard) {
             // Select and set first card
             firstCard = $(this).find(".front_face")[0]
+            console.log(firstCard);
         } else if (!secondCard) {
             // Select and set second card
             secondCard = $(this).find(".front_face")[0]
@@ -32,12 +102,6 @@ function gameStart(){
                 console.log("match")
                 $(`#${firstCard.id}`).parent().off("click")
                 $(`#${secondCard.id}`).parent().off("click")
-                // If player has won
-                if ($("#img1").parent().hasClass("flip") && $("#img2").parent().hasClass("flip") && $("#img3").parent().hasClass("flip")
-                    && $("#img4").parent().hasClass("flip") && $("#img5").parent().hasClass("flip") && $("#img6").parent().hasClass("flip")) {
-                    console.log("Win")
-                    alert("You win!")
-                }
             } else if (firstCard.src != secondCard.src) {
                 // Different card selected
                 console.log("no match")
@@ -58,15 +122,20 @@ function gameStart(){
             console.log("New first card:", firstCard);
         }
 
-        let pairsLeft = Math.ceil(3 - $(".flip").length / 2)
-        let pairsMatched = Math.floor(3 - pairsLeft)
-        let totalPairs = 3
+        let pairsLeft = Math.ceil(totalPairs - $(".flip").length / 2);
+        let pairsMatched = Math.floor(totalPairs - pairsLeft);
         // Update header
         $("#clickCounter").html(`
-        ${clickCount} clicks <br>
-        ${pairsLeft} pairs left <br>
-        ${pairsMatched} pairs matched <br>
-        ${totalPairs} total pairs <br>
+            ${clickCount} clicks <br>
+            ${pairsLeft} pairs left <br>
+            ${pairsMatched} pairs matched <br>
+            ${totalPairs} total pairs <br>
         `);
+
+        if ($(".flip").length === totalPairs * 2) {
+            console.log("Win");
+            clearInterval(timer); // Stop the countdown timer
+            alert("You win!");
+        }
     });
 }
