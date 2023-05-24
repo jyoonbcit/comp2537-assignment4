@@ -2,6 +2,7 @@ let difficulty = 'Easy';
 let totalCards = 0;
 let numRows = 0;
 let numCols = 0;
+let timer;
 
 function setDifficulty(diff) {
     difficulty = diff;
@@ -18,22 +19,20 @@ function setDifficulty(diff) {
         numRows = 4;
         numCols = 5;
     }
-    createGameGrid();
 }
 
 function createGameGrid() {
-    const gameGrid = $("#game_grid");
-    gameGrid.empty();
+    $("#game_grid").empty();
 
     const pairs = totalCards / 2;
     const images = [];
 
-    for (let i = 1; i <= totalCards; i++) {
+    for (let i = 1; i <= pairs; i++) {
         images.push(i);
     }
 
-    shuffleArray(images);
     let idNumber = 0;
+    const cards = [];
 
     for (let i = 0; i <= 1; i++) {
         for (let j = 0; j < pairs; j++) {
@@ -43,11 +42,17 @@ function createGameGrid() {
             const backFace = $("<img>").addClass("back_face").attr("src", "back.webp").attr("alt", "");
 
             card.append(frontFace, backFace);
-            gameGrid.append(card);
+            cards.push(card);
         }
     }
 
-    gameGrid.css({
+    shuffleArray(cards);
+
+    for (const card of cards) {
+        $("#game_grid").append(card);
+    }
+
+    $("#game_grid").css({
         "width": `${numCols * 200}px`,
         "height": `${numRows * 200}px`
     });
@@ -66,7 +71,7 @@ function shuffleArray(array) {
 
 function countdown() {
     let time = 100;
-    let timer = setInterval(() => {
+    timer = setInterval(() => {
         time--;
         $("#timer").html(time);
         if (time == 0) {
@@ -77,7 +82,9 @@ function countdown() {
 }
 
 function startGame() {
+    clearInterval(timer);
     countdown();
+    createGameGrid();
 
     let clickCount = 0;
     let firstCard = undefined;
